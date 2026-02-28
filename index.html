@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=800, height=480">
+    <link rel="stylesheet" href="https://trmnl.com/css/latest/plugins.css">
+    <script src="https://trmnl.com/js/latest/plugins.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* ================================================
+           FOUR THOUSAND WEEKS — TRMNL Life Calendar
+           1 dot = 1 month · 48 months per row · 100 years
+           ================================================ */
+
+        .screen, .view, .layout {
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 800px;
+            height: 480px;
+        }
+
+        .life-wrap {
+            display: flex;
+            flex-direction: column;
+            width: 800px;
+            height: 480px;
+            padding: 14px 14px 10px;
+            box-sizing: border-box;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        /* ---- Header ---- */
+
+        .header {
+            width: 100%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding-bottom: 7px;
+            border-bottom: 1.5px solid #000;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+
+        .header__left {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .header__title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 22px;
+            font-weight: 400;
+            letter-spacing: -0.3px;
+            line-height: 1;
+        }
+
+        .header__divider {
+            width: 1px;
+            height: 14px;
+            background: #000;
+            opacity: 0.2;
+            align-self: center;
+        }
+
+        .header__subtitle {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 7.5px;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            opacity: 0.35;
+            line-height: 1;
+        }
+
+        .header__right {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+
+        .header__week {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .header__week-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 7px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.35;
+        }
+
+        /* ---- Meta Row ---- */
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 6px;
+            flex-shrink: 0;
+        }
+
+        .meta-row__item {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 7px;
+            font-weight: 500;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            opacity: 0.3;
+        }
+
+        .meta-row__bar {
+            flex: 1;
+            height: 1.5px;
+            background: #e0e0e0;
+            margin: 0 14px;
+            position: relative;
+        }
+
+        .meta-row__bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #000;
+        }
+
+        .meta-row__bar-marker {
+            position: absolute;
+            top: -2.5px;
+            width: 1.5px;
+            height: 7px;
+            background: #000;
+        }
+
+        /* ---- Dot Grid ---- */
+
+        .grid-area {
+            display: flex;
+            align-items: flex-start;
+            gap: 3px;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .age-col {
+            position: relative;
+            width: 13px;
+            flex-shrink: 0;
+        }
+
+        .age-lbl {
+            position: absolute;
+            right: 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 6.5px;
+            font-weight: 500;
+            line-height: 1;
+            opacity: 0.2;
+        }
+
+        .dot-grid {
+            display: grid;
+            grid-template-columns: repeat(48, 1fr);
+            grid-template-rows: repeat(25, 1fr);
+            gap: 1.5px;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dot {
+            border-radius: 50%;
+            background: #d4d4d4;
+            min-width: 0;
+            min-height: 0;
+        }
+
+        .dot--past {
+            background: #1a1a1a;
+        }
+
+        .dot--now {
+            background: #fff;
+            box-shadow: inset 0 0 0 2px #000;
+        }
+    </style>
+</head>
+<body class="environment trmnl">
+    <div class="screen">
+        <div class="view view--full">
+            <div class="layout">
+                <div class="life-wrap">
+
+                    <!-- ======== HEADER ======== -->
+                    <div class="header">
+                        <div class="header__left">
+                            <div class="header__title">1,200 Months</div>
+                            <div class="header__divider"></div>
+                            <div class="header__subtitle">One dot, one month</div>
+                        </div>
+                        <div class="header__right">
+                            <span class="header__week-label">Month</span>
+                            <span class="header__week" id="jsWeek">&mdash;</span>
+                        </div>
+                    </div>
+
+                    <!-- ======== META ROW ======== -->
+                    <div class="meta-row">
+                        <span class="meta-row__item" id="jsOf">&mdash;</span>
+                        <div class="meta-row__bar">
+                            <div class="meta-row__bar-fill" id="jsBar" style="width:0%"></div>
+                            <div class="meta-row__bar-marker" id="jsMarker" style="left:0%"></div>
+                        </div>
+                        <span class="meta-row__item" id="jsPos">&mdash;</span>
+                    </div>
+
+                    <!-- ======== DOT GRID ======== -->
+                    <div class="grid-area">
+                        <div class="age-col" id="jsAges"></div>
+                        <div class="dot-grid" id="jsGrid"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // =====================================================
+    //  CONFIGURATION
+    //  For TRMNL recipe, replace with: '{{ birth_date }}'
+    // =====================================================
+    var BIRTH_DATE     = '1976-04-11';  // YYYY-MM-DD
+    var LIFE_YEARS     = 100;
+    var MONTHS_PER_ROW = 48;            // 4 years per row
+    // =====================================================
+
+    (function () {
+        var birth       = new Date(BIRTH_DATE + 'T00:00:00');
+        var now         = new Date();
+        var totalMonths = LIFE_YEARS * 12;
+        var totalRows   = totalMonths / MONTHS_PER_ROW;
+        var totalWeeks  = LIFE_YEARS * 52;
+
+        // ---- months lived ----
+        var monthsLived = (now.getFullYear() - birth.getFullYear()) * 12
+                        + (now.getMonth() - birth.getMonth());
+        if (now.getDate() < birth.getDate()) monthsLived--;
+        monthsLived = Math.max(0, Math.min(monthsLived, totalMonths));
+
+        // ---- weeks lived ----
+        var weeksLived = Math.max(0, Math.floor((now - birth) / 604800000));
+        var yearOfLife = Math.floor(weeksLived / 52);
+        var weekInYear = weeksLived % 52;
+        var pct        = Math.min(100, (weeksLived / totalWeeks) * 100).toFixed(1);
+
+        // ---- update header ----
+        var monthPct = Math.min(100, (monthsLived / totalMonths) * 100).toFixed(1);
+        document.getElementById('jsWeek').textContent    = monthsLived.toLocaleString();
+        document.getElementById('jsOf').textContent      = monthsLived.toLocaleString() + ' of ' + totalMonths.toLocaleString();
+        document.getElementById('jsBar').style.width     = monthPct + '%';
+        document.getElementById('jsMarker').style.left   = monthPct + '%';
+        document.getElementById('jsPos').textContent     = 'Year ' + yearOfLife + ' \u00B7 Mo ' + (monthsLived % 12) + ' \u00B7 ' + monthPct + '%';
+
+        // ---- age labels ----
+        var agesEl = document.getElementById('jsAges');
+
+        requestAnimationFrame(function () {
+            var gridEl2  = document.getElementById('jsGrid');
+            var gridH    = gridEl2.offsetHeight;
+            var rowPitch = gridH / totalRows;
+            agesEl.style.height = gridH + 'px';
+
+            for (var age = 0; age <= LIFE_YEARS; age += 10) {
+                var row = (age * 12) / MONTHS_PER_ROW;
+                var lbl = document.createElement('div');
+                lbl.className = 'age-lbl';
+                lbl.textContent = age;
+                if (age === LIFE_YEARS) {
+                    lbl.style.bottom = '0px';
+                } else {
+                    lbl.style.top = (row * rowPitch) + 'px';
+                }
+                agesEl.appendChild(lbl);
+            }
+        });
+
+        // ---- dot grid (48 cols x 25 rows = 1,200 dots) ----
+        var gridEl = document.getElementById('jsGrid');
+        var frag   = document.createDocumentFragment();
+
+        for (var i = 0; i < totalMonths; i++) {
+            var d = document.createElement('div');
+            if (i < monthsLived) {
+                d.className = 'dot dot--past';
+            } else if (i === monthsLived) {
+                d.className = 'dot dot--now';
+            } else {
+                d.className = 'dot';
+            }
+            frag.appendChild(d);
+        }
+
+        gridEl.appendChild(frag);
+    })();
+    </script>
+</body>
+</html>
